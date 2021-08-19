@@ -275,8 +275,22 @@ In the {{ $names.company.lower }} host OS [dnsmasq][dnsmasq-link] is used to man
 
 {{> "general/persistent-storage"}}
 
-### Inconsistency in `/tmp` Directory
-At the time of writing there is an inconsistency in the behavior of `/tmp` directory during reboot and services restart. With the current behavior any thing in `/tmp` will persist over a device reboot, but will **not** persist over services restart.
+### Temporary directories
+
+Note that the `/tmp` and `/var/tmp` directories in a container are not true `tmpfs` volumes by default, and they are treated like any other ephemeral container layers.
+
+As a result you can expect that data in these directories will persist over a device reboot, but will **not** persist over a [services restart](https://www.balena.io/docs/learn/manage/actions/#restart-application).
+
+If you would like these directories to act more like `tmpfs` volumes and write to volatile memory, you can add these lines in your compose file.
+
+```yml
+services:
+  myapp:
+    image: foo/bar
+    tmpfs:
+      - /tmp
+      - /var/tmp
+```
 
 ### Mounting external storage media
 
